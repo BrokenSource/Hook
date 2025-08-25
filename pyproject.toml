@@ -1,9 +1,8 @@
 [project]
-name        = "hook"
-description = "Common hatchling hook used in projects"
-authors     = [{name="Tremeschin"}]
-version     = "1.0.0"
-license     = "MIT"
+name    = "hook"
+version = "1.0.0"
+license = "MIT"
+dependencies = ["uv"]
 
 [project.entry-points.hatch]
 plugin = "hook"

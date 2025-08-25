@@ -1,21 +1,37 @@
 import os
-import runpy
-from pathlib import Path
+import subprocess
+import sys
+from functools import cache
+from subprocess import PIPE
 
 from hatchling.metadata.plugin.interface import MetadataHookInterface
 from hatchling.plugin import hookimpl
+
+
+@cache
+def get_version(package: str) -> str:
+    process = subprocess.run((
+        sys.executable, "-m",
+        "uv", "version",
+        "--package", package,
+        "--color", "never",
+        "--no-config",
+        "--short",
+    ), stdout=PIPE)
+
+    # Within the monorepo, pyproject version
+    if process.returncode == 0:
+        output = process.stdout.decode("utf-8")
+        return output.strip()
+
+    # Standalone mode
+    return "0.0.0"
 
 
 class BrokenHook(MetadataHookInterface):
     PLUGIN_NAME = "plugin"
 
     def update(self, metadata: dict) -> None:
-        # "/monorepo/packages/Hook/hook/__init__.py"
-        monorepo = Path(__file__).parent.parent.parent.parent
-
-        # Get the version from the main package
-        context = runpy.run_path(monorepo/"broken"/"version.py")
-        version = metadata["version"] = context["__version__"]
 
         # Trick to replace all list items in place
         def patch(items: list[str]) -> None:
@@ -25,7 +41,8 @@ class BrokenHook(MetadataHookInterface):
                 # Replace git+ dependencies
                 if (git := "@git+") in item:
                     package = item.split(git)[0]
-                    item = f"{package}=={version}"
+                    version = get_version(package)
+                    item    = f"{package}=={version}"
 
                 # Pin versions on release binaries
                 if (os.getenv("PYAKET_RELEASE", "0") == "1"):
