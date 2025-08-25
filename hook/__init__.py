@@ -3,11 +3,15 @@ import runpy
 from pathlib import Path
 
 from hatchling.metadata.plugin.interface import MetadataHookInterface
+from hatchling.plugin import hookimpl
 
 
 class BrokenHook(MetadataHookInterface):
+    PLUGIN_NAME = "plugin"
+
     def update(self, metadata: dict) -> None:
-        monorepo = Path(__file__).parent.parent
+        # "/monorepo/packages/Hook/hook/__init__.py"
+        monorepo = Path(__file__).parent.parent.parent.parent
 
         # Get the version from the main package
         context = runpy.run_path(monorepo/"broken"/"version.py")
@@ -33,3 +37,7 @@ class BrokenHook(MetadataHookInterface):
         # Patch all normal and optional dependencies
         list(map(patch, metadata.get("optional-dependencies", {}).values()))
         patch(metadata.get("dependencies", {}))
+
+@hookimpl
+def hatch_register_metadata_hook():
+    return BrokenHook
