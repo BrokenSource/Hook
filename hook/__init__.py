@@ -10,6 +10,7 @@ from hatchling.plugin import hookimpl
 
 @cache
 def get_version(package: str) -> str:
+    package = package.split("[")[0]
     process = subprocess.run((
         sys.executable, "-m",
         "uv", "version",
