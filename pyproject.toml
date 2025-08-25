@@ -1,7 +1,6 @@
 [project]
 name    = "hook"
 version = "1.0.0"
-license = "MIT"
 dependencies = ["uv"]
 
 [project.entry-points.hatch]
