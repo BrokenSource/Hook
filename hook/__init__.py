@@ -16,7 +16,6 @@ def get_version(package: str) -> str:
         "uv", "version",
         "--package", package,
         "--color", "never",
-        "--no-config",
         "--short",
     ), stdout=PIPE)
 
@@ -43,7 +42,7 @@ class BrokenHook(MetadataHookInterface):
                 if (git := "@git+") in item:
                     package = item.split(git)[0]
                     version = get_version(package)
-                    item    = f"{package}=={version}"
+                    item    = f"{package}~={version}"
 
                 # Pin versions on release binaries
                 if (os.getenv("PYAKET_RELEASE", "0") == "1"):
@@ -55,6 +54,7 @@ class BrokenHook(MetadataHookInterface):
         # Patch all normal and optional dependencies
         list(map(patch, metadata.get("optional-dependencies", {}).values()))
         patch(metadata.get("dependencies", {}))
+
 
 @hookimpl
 def hatch_register_metadata_hook():
