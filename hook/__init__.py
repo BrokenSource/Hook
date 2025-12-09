@@ -6,6 +6,7 @@ from subprocess import PIPE
 
 from hatchling.metadata.plugin.interface import MetadataHookInterface
 from hatchling.plugin import hookimpl
+from packaging.version import Version
 
 
 @cache
@@ -21,11 +22,12 @@ def get_version(package: str) -> str:
 
     # Within the monorepo, pyproject version
     if process.returncode == 0:
-        output = process.stdout.decode("utf-8")
-        return output.strip()
+        version = process.stdout.decode("utf-8")
+        version = Version(version.strip())
+        return f"~={version.major}.0"
 
-    # Standalone mode
-    return "0.0.0"
+    # Standalone mode, accept any version
+    return ">=0.0.0"
 
 
 class BrokenHook(MetadataHookInterface):
@@ -42,7 +44,7 @@ class BrokenHook(MetadataHookInterface):
                 if (git := "@git+") in item:
                     package = item.split(git)[0]
                     version = get_version(package)
-                    item    = f"{package}~={version}"
+                    item    = f"{package}{version}"
 
                 # Pin versions on release binaries
                 if (os.getenv("PYAKET_RELEASE", "0") == "1"):

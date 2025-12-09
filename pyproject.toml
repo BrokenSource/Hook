@@ -1,7 +1,7 @@
 [project]
 name    = "hook"
 version = "1.0.0"
-dependencies = ["uv"]
+dependencies = ["packaging", "uv"]
 
 [project.entry-points.hatch]
 plugin = "hook"
