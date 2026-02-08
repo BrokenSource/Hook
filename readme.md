@@ -9,7 +9,7 @@ A small Python `build-system` middleware for [hatchling](https://hatch.pypa.io/l
 - Dynamically resolves `@ git+` dependencies into `~={latest}` workspace or git version [^git]
 - Pins all package versions to `==` when building a [Pyaket](https://pyaket.dev/) executable, for reproducibility.
 
-[^git]: Wheels cannot have direct references on PyPI, so we update the metadata at build time in the order found in `(workspace > git)`. This also allows for decoupled installation of projects that depend on each other outside a [workspace](https://docs.astral.sh/uv/concepts/projects/workspaces/), latest git only.
+[^git]: Wheels cannot have direct references on PyPI, so we update the metadata at build time in the order found in `(workspace > git)`. This also allows for decoupled installation of projects that depend on each other outside a uv [workspace](https://docs.astral.sh/uv/concepts/projects/workspaces/), latest git only.
 
 ## 🟡 Usage
 
