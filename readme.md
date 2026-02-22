@@ -20,8 +20,12 @@ Have the following in your `pyproject.toml`:
 
 ```toml
 [project]
+
+# Fixme: Need a 'dynamic' field to trigger hook
+dynamic = ["keywords"]
+
+# Resolves to ~={latest} on wheels
 dependencies = [
-  # Resolves to ~={latest} on wheels
   "shared @ git+...",
   "engine @ git+...",
 ]
